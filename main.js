@@ -32,17 +32,12 @@ error: () => {
 
 
 });
-function logIn(){
-  $.ajax(root+'login',{
-  type:'GET',
-  xhrFields: {withCredentials: true},
-  data:{
-    username:user,
-    password:pw
-  },
 
-});
+// Cite: Learned this method from Yue Pi
+function transfer(string){
+  return string.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
+
 function goReview(){
   let main = $('body');
   let title;
@@ -58,16 +53,17 @@ function goReview(){
   xhrFields: {withCredentials: true},
   success:(r)=>{
     //alert('hahahahha');
-    console.log(r);
+    //console.log(r);
     if(r.status){
        title = r.data.question.question_title;
+       title = transfer(title);
        //alert(title);
        //let qTitle = $('<div class="qtitle">' + title + '</div>')
        //let a =
        bigDiv.append('<div class="qtitle">' + title + '</div>');
        let questionId = r.data.question.question_id;
-       let answer1 =r.data.answer1.text;
-       let answer2 = r.data.answer2.text;
+       let answer1 =transfer(r.data.answer1.text);
+       let answer2 = transfer(r.data.answer2.text);
        let id1 = r.data.answer1.id;
        let id2 = r.data.answer2.id;
        let buttonA1 = $('<button class="A1" onclick=reviewAnswer(event,'+questionId+','+id1+','+id2+','+id1+')>'+answer1+'</button>');
@@ -119,16 +115,17 @@ function reviewAnswer(event,questionId,id1,id2,chooseId){
       xhrFields: {withCredentials: true},
       success:(r)=>{
         //alert('hahahahha');
-        console.log("r2:"+r);
+        //console.log("r2:"+r);
         if(r.status){
-           title = r.data.question.question_title;
+           title = transfer(r.data.question.question_title);
+
            //alert(title);
            //let qTitle = $('<div class="qtitle">' + title + '</div>')
            //let a =
            parent.append('<div class="qtitle">' + title + '</div>');
            let questionId = r.data.question.question_id;
-           let answer1 =r.data.answer1.text;
-           let answer2 = r.data.answer2.text;
+           let answer1 =transfer(r.data.answer1.text);
+           let answer2 = transfer(r.data.answer2.text);
            let id1 = r.data.answer1.id;
            let id2 = r.data.answer2.id;
            let buttonA1 = $('<button class="A1" onclick=reviewAnswer(event,'+questionId+','+id1+','+id2+','+id1+')>'+answer1+'</button>');
@@ -234,7 +231,7 @@ function submit(e,edit,id){
           buttonDiv.append('<button class="delete" onclick = deleteH(event,'+id+')'+'>Delete</button>')
           buttonDiv.append('<button class="edit" onclick = editAns(event,'+id+')'+'>Edit</button>')
           parent.empty();
-          parent.html(myAnswer);
+          parent.html(transfer(myAnswer));
           parent.attr("id","aid_"+r.answerId);
           //grandParent.addClass('answered');
 
@@ -258,7 +255,7 @@ function submit(e,edit,id){
       buttonDiv.append('<button class="delete" onclick = deleteH(event,'+id+')'+'>Delete</button>')
       buttonDiv.append('<button class="edit" onclick = editAns(event,'+id+')'+'>Edit</button>')
       parent.empty();
-      parent.html(myAnswer);
+      parent.html(transfer(myAnswer));
       parent.attr("id","aid_"+r.answerId);
       grandParent.addClass('answered');
 
@@ -345,8 +342,9 @@ function deleteH(event,questionId){
 
 
 function createDiv(question){
-       let qdiv = $('<div class="question" id="qid_' + question.id + '"></div>');
-     	qdiv.append('<div class="qtitle">' + question.title + '</div>');
+      let title = transfer(question.title);
+      let qdiv = $('<div class="question" id="qid_' + question.id + '"></div>');
+     	qdiv.append('<div class="qtitle">' + title + '</div>');
      	qdiv.append('<div class="count">' +"AnswerCount: "+ question.answerCount + '</div>');
      	return qdiv;
      }
